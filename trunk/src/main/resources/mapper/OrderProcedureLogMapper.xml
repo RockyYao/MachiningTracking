@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.OrderProcedureLogMapper">
+    <resultMap id="BaseResultMap" type="com.oechsler.model.OrderProcedureLog">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_by" property="createBy" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+        <result column="procedure_id" property="procedureId" jdbcType="INTEGER"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP"/>
+        <result column="cost_time" property="costTime" jdbcType="VARCHAR"/>
+        <result column="work_no" property="workNo" jdbcType="VARCHAR"/>
+        <result column="log_type" property="logType" jdbcType="INTEGER"/>
+        <result column="format_rel_cost_time" property="formatRelCostTime" jdbcType="VARCHAR"/>
+        <result column="workName" property="workName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getById" parameterType="Object" resultMap="BaseResultMap">
+      select oopl.*,
+    oe.name workName
+    from ot_order_procedure_log oopl
+    left join ot_employee oe on oe.work_no = oopl.work_no
+    where oopl.id = #{id}
+    </select>
+
+    <select id="selectStartTime" parameterType="com.oechsler.model.OrderProcedureLog" resultMap="BaseResultMap">
+    SELECT *
+      FROM  ot_order_procedure_log
+      WHERE procedure_id = #{procedureId}
+      AND log_type=2
+      AND end_time IS NULL
+  </select>
+
+    <select id="queryLogByProcedureId" parameterType="java.lang.Object" resultMap="BaseResultMap">
+    select oopl.*,
+    oe.name workName
+    from ot_order_procedure_log oopl
+    left join ot_employee oe on oe.work_no = oopl.work_no
+    where oopl.procedure_id = #{id}
+  </select>
+
+    <insert id="insert" parameterType="com.oechsler.model.OrderProcedureLog">
+    insert into ot_order_procedure_log (create_by, create_time,
+      update_by, update_time, deleted, 
+      procedure_id, start_time, end_time, 
+      cost_time, work_no,log_type,receive_time,format_rel_cost_time)
+    values (#{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER},
+      #{procedureId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{costTime,jdbcType=VARCHAR}, #{workNo,jdbcType=VARCHAR},#{logType},#{receiveTime},
+      #{formatRelCostTime})
+  </insert>
+    <insert id="insertSelective" parameterType="com.oechsler.model.OrderProcedureLog">
+        insert into ot_order_procedure_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+            <if test="procedureId != null">
+                procedure_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="costTime != null">
+                cost_time,
+            </if>
+            <if test="workNo != null">
+                work_no,
+            </if>
+            <if test="logType != null">
+                log_type,
+            </if>
+            <if test="receiveTime != null">
+                receive_time,
+            </if>
+            <if test="formatRelCostTime != null">
+                format_rel_cost_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="procedureId != null">
+                #{procedureId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="costTime != null">
+                #{costTime,jdbcType=VARCHAR},
+            </if>
+            <if test="workNo != null">
+                #{workNo,jdbcType=VARCHAR},
+            </if>
+            <if test="logType != null">
+                #{logType},
+            </if>
+            <if test="receiveTime != null">
+                #{receiveTime},
+            </if>
+            <if test="formatRelCostTime != null">
+                #{formatRelCostTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderProcedureLog" parameterType="com.oechsler.model.OrderProcedureLog" >
+        update ot_order_procedure_log
+        <set >
+            <if test="createBy != null" >
+                create_by = #{createBy,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null" >
+                update_by = #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="procedureId != null" >
+                procedure_id = #{procedureId,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null" >
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="costTime != null" >
+                cost_time = #{costTime,jdbcType=VARCHAR},
+            </if>
+            <if test="workNo != null" >
+                work_no = #{workNo,jdbcType=VARCHAR},
+            </if>
+            <if test="logType != null" >
+                log_type = #{logType,jdbcType=INTEGER},
+            </if>
+            <if test="receiveTime != null" >
+                receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="formatRelCostTime != null" >
+                format_rel_cost_time = #{formatRelCostTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

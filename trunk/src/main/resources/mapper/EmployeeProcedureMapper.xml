@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.EmployeeProcedureMapper" >
+  <resultMap id="BaseResultMap" type="com.oechsler.model.EmployeeProcedure" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="work_no" property="workNo" jdbcType="VARCHAR" />
+    <result column="procedure_name" property="procedureName" jdbcType="VARCHAR" />
+    <result column="sort_name" property="sortName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, work_no, procedure_name,sort_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ot_employee_procedure
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ot_employee_procedure
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <select id="queryListByParam" parameterType="EmployeeProcedure" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ot_employee_procedure
+    where work_no = #{workNo}
+    and procedure_name = #{procedureName}
+  </select>
+
+  <select id="queryProcedureByWorkNo" parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from ot_employee_procedure
+    where work_no = #{workNo}
+  </select>
+
+  <insert id="batchInsertEmployeeProcedure" parameterType="List">
+    <foreach collection="list" item="employeeProcedure" separator=";">
+      insert into ot_employee_procedure
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="employeeProcedure.workNo != null" >
+          work_no,
+        </if>
+        <if test="employeeProcedure.procedureName != null" >
+          procedure_name,
+        </if>
+        <if test="employeeProcedure.sortName != null" >
+          sort_name,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="employeeProcedure.workNo != null" >
+          #{employeeProcedure.workNo,jdbcType=VARCHAR},
+        </if>
+        <if test="employeeProcedure.procedureName != null" >
+          #{employeeProcedure.procedureName,jdbcType=VARCHAR},
+        </if>
+        <if test="employeeProcedure.sortName != null" >
+          #{employeeProcedure.sortName,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.oechsler.model.EmployeeProcedure" >
+    insert into ot_employee_procedure
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="workNo != null" >
+        work_no,
+      </if>
+      <if test="procedureName != null" >
+        procedure_name,
+      </if>
+      <if test="sortName != null" >
+        sort_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="workNo != null" >
+        #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="procedureName != null" >
+        #{procedureName,jdbcType=VARCHAR},
+      </if>
+      <if test="sortName != null" >
+        #{sortName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oechsler.model.EmployeeProcedure" >
+    update ot_employee_procedure
+    <set >
+      <if test="workNo != null" >
+        work_no = #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="procedureName != null" >
+        procedure_name = #{procedureName,jdbcType=VARCHAR},
+      </if>
+      <if test="sortName != null" >
+        sort_name = #{sortName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

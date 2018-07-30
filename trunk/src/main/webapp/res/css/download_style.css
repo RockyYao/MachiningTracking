@@ -1,0 +1,154 @@
+@charset "utf-8";
+body { color:#000; font-family:"微软雅黑","宋体"; font-size:12px;}
+a { text-decoration:none; }
+a:hover { text-decoration:underline; }
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td { margin: 0; padding:0; }
+table { border-collapse:collapse; border-spacing:0; }
+fieldset, img { border:0; }
+address, caption, cite, code, dfn, em, th, var, optgroup { font-style:inherit; font-weight:inherit; }
+del, ins { text-decoration:none; }
+li { list-style:none; }
+caption, th { text-align:left; }
+h1 { font-size:18px; }
+h2 { font-size:14px; }
+h3, h4, h5, h6 { font-size:12px; }
+h4, h5, h6 { font-weight:normal; }
+abbr, acronym { border:0; font-variant:normal; }
+input, button, textarea, select, optgroup, option { font-family:inherit; font-size:inherit; font-style:inherit; font-weight:inherit; }
+input, button, textarea, select { *font-size:100%;}
+textarea, input { resize: none; outline: none; }
+input:focus { outline: none; }
+strong, b { font-weight:bold; }
+
+.c_b { zoom:1; }
+.c_b:after { clear:both; content:" "; display:block }
+
+.w_640{ width:640px; overflow:hidden; margin:0 auto;}
+
+/*通用头部导航*/
+.re_topNav{ height:87px; overflow:hidden; background:url(../img/download_action_bar.png) 0 0 repeat-x; position:relative; border-bottom:solid 1px #650101;}
+.re_topNav h1{ text-align:center; text-shadow:#000 1px 1px; font-size:34px; font-weight: normal; color:#fff; line-height:86px;}
+.re_topNav a{ display:block; position:absolute; text-indent:-9999px; background-image:url(../../img/m/img.jpg); overflow:hidden;}
+.re_topNav .back{ left:16px; top:13px; width:119px; height:59px; background-position:0 0;}
+.re_topNav .user{ left:459px; top:13px; width:80px; height:59px; background-position:-120px 0;}
+.re_topNav .downLoad{ left:547px; top:13px; width:80px; height:59px; background-position:-201px 0;}
+
+/*优惠券标题*/
+.ticketTitle{overflow:hidden; border-bottom:solid 1px #D2D2D2;}
+.ticketTitle p{
+    color: #bfbfbf;
+    padding: 10px 20px;
+    line-height: 30px;
+    font-size: 20px;
+    clear: both;
+}
+.ticketTitle span{float:left; overflow:hidden; margin:22px 0 10px;}
+.ticketTitle .ico{ height:31px; width:68px; background-image:url(../../img/m/ico.png); margin-left:23px; display:inline; text-indent:-9999px;}
+.ticketTitle .ico_L{ background-position: 0 0;}
+.ticketTitle .ico_G{ background-position:-69px 0;}
+.ticketTitle .ico_S{ background-position:-138px 0;}
+.ticketTitle .ico_C{ background-position:-207px 0;}
+.ticketTitle .ico_D{ background-position:-276px 0;}
+.ticketTitle .ico_T{ background-position:-138px -32px;}
+.ticketTitle .txt{ height:30px; line-height:30px; font-size:24px; width:500px; margin-left:14px; display:inline;}
+
+/*优惠内容展示*/
+.ticketShow{border-bottom:solid 1px #D2D2D2; text-align:center;}
+
+/*活动信息*/
+.activityInfo{border-bottom:solid 1px #D2D2D2; position:relative; height:119px;}
+.activityInfo .btn{ width:248px; height:77px; line-height:77px; overflow:hidden; background:url(../../img/m/img.jpg) 0 -60px; text-align:center; color:#fff; font-size:34px; position:absolute; right:22px; top:19px; display:block;}
+.activityInfo .btn2{ width:248px; height:77px; line-height:77px; overflow:hidden; background:url(../../img/m/img.jpg) 0 -60px; text-align:center; color:#fff; font-size:34px; position:absolute; right:22px; top:19px; border:none; cursor: pointer;}
+.activityInfo .btn-disabled{ width:248px; height:77px; line-height:77px; overflow:hidden; background:url(../../img/m/img.jpg) 0 -138px; text-align:center; color:#fff; font-size:34px; position:absolute; right:22px; top:19px; border:none; cursor: default;}
+.activityInfo .btn-disabled:hover{ text-decoration:none;}
+.activityInfo ul{ margin-left:22px; overflow:hidden;}
+.activityInfo ul.x1{padding-top:38px;}
+.activityInfo ul.x2{padding-top:10px;}
+.activityInfo li{ height:43px; overflow:hidden; margin-bottom:10px; line-height:42px;}
+.activityInfo li span{ float:left; height:43px; overflow:hidden;}
+.activityInfo li .t{ width:90px; text-align:center; color:#000; background:url(../../img/m/ico.png) 0 -32px; font-size:28px;}
+.activityInfo li .y{ width:150px; text-align:center; color:#000; font-size:28px; text-decoration: line-through;}
+.activityInfo li .d{ text-align:right; width:230px; text-align:center;font-size:28px;}
+.activityInfo li .d strong{ color:#DE0000;}
+
+/*活动规则*/
+.activityRule{ padding:10px 18px; line-height:30px; font-size:24px;border-bottom:solid 1px #D2D2D2;}
+.activityRule dt{ height:30px; margin-bottom:10px; overflow:hidden;}
+
+/*热门精选*/
+.hotWelfare{padding:10px 18px;}
+.hotWelfare h2{ line-height:60px; font-size:24px; font-weight:normal;}
+.hotWelfare li .link{ display:block; color:#000; background:#fff; cursor:pointer;}
+.hotWelfare li .link:hover{ text-decoration:none;}
+.hotWelfare li{ border:solid 1px #d2d2d2; position:relative; margin-bottom:12px; padding:18px;}
+.hotWelfare li .ico{ float:left; width:77px; height:77px; text-indent:-9999px; overflow:hidden; background-image:url(../../img/m/ico_2.png);}
+.hotWelfare li .ico_L{ background-position:0 0;}
+.hotWelfare li .ico_S{ background-position:-78px 0;}
+.hotWelfare li .ico_D{ background-position:-156px 0;}
+.hotWelfare li .ico_C{ background-position:-234px 0;}
+.hotWelfare li .ico_G{ background-position:-312px 0;}
+.hotWelfare li dl{ float:left; margin-left:15px; display:inline; width:420px; overflow:hidden;}
+.hotWelfare li dt{ font-size:28px; height:40px; line-height:40px; overflow:hidden;}
+.hotWelfare li dd{ height:38px; line-height:38px; font-size:22px; overflow:hidden; color:#656565;}
+.hotWelfare li dd strong{ color:#DE0000; padding:0 5px;}
+.hotWelfare .more{ display:block; text-indent:-9999px; width:40px; height:40px; background:url(../../img/m/ico.png) 0 -76px; position:absolute; top:35px; right:20px;}
+
+/*新增地址*/
+.la_addAddress{ padding:24px 14px;}
+.addAddress ul{ border:solid 1px #8A8A8A; margin-bottom:10px;}
+.addAddress li{ height:98px; overflow:hidden; border-bottom:dashed 1px #999;}
+.addAddress li:last-child{ border-bottom:none;}
+.addAddress label{ width:130px; text-align:right; color:#000; float:left; font-size:28px;line-height:98px;}
+.addAddress .txt{ border:none;height:98px; line-height:98px; width:470px; float:left;font-size:28px; color:#A5A5A5}
+.addAddress select{ border:none;height:32px; line-height:32px; width:470px; float:left;font-size:28px; color:#A5A5A5; margin-top:30px;}
+.addAddress select option{ display:block;}
+.addAddress .btn{ width:610px; height:77px; line-height:77px; font-size:34px; background:url(../../img/m/addAddress.png); margin:0 auto; display:block; border:none; text-align:center; color:#fff; cursor:pointer;}
+
+/*选择收货地址*/
+.la_editAddress{ padding:24px 14px;}
+.editAddress ul{ border:solid 1px #8A8A8A; margin-bottom:10px;}
+.editAddress li{ height:98px; overflow:hidden; border-bottom:dashed 1px #999;}
+.editAddress li:last-child{ border-bottom:none;}
+.editAddress label{ width:490px; padding:8px 10px 0 20px; color:#000; float:left; font-size:28px;line-height:42px; height:80px;}
+.editAddress .radio{ float:left; margin-top:30px; width:40px; height:40px; margin-left:20px; display:inline;}
+.editAddress .btn{ width:610px; height:77px; line-height:77px; font-size:34px; background:url(../../img/m/addAddress.png); margin:0 auto; display:block; border:none; text-align:center; color:#fff; cursor:pointer;}
+.editAddress li .add{ display:block; height:98px; line-height:98px; font-size:28px; color:#000; margin:0 40px 0 20px; background: url(../../img/m/addAddress2.png) right center no-repeat;}
+
+/*领取反馈*/
+.lqcg_sw, .lqcg_yhm {text-align:left; }
+.lqcg_sw h2, .lqcg_yhm h2 {font-size:36px;padding:80px 20px 0 80px;}
+.lqcg_sw p, .lqcg_yhm p{ line-height:40px; font-size:28px;padding:50px 20px 50px 80px;}
+.lqcg_sw .tip, .lqcg_yhm .tip{color:#999999; padding:0 20px 50px 80px; font-size:24px;}
+.lqcg_sw .action, .lqcg_yhm .action{text-align:center; padding:30px 0 0 0;}
+.lqcg_sw .more, .lqcg_yhm .more{width:610px; height:77px; line-height:77px; font-size:36px; background:url(../../img/m/addAddress.png) right top;  display:inline-block; text-align:center; color:#fff; cursor:pointer; }
+.lqcg_sw .more2, .lqcg_yhm .more2{width:250px; height:77px; line-height:77px; font-size:36px; background:url(../../img/m/addAddress.png) right top;  display:inline-block; text-align:center; color:#fff; cursor:pointer;padding-right:10px; margin-left:20px;}
+.lqcg_sw .more2 span, .lqcg_yhm .more2 span{ background:url(../../img/m/addAddress.png); display:block;padding-left:10px;}
+.lqcg_sw .more:hover, .lqcg_sw .more2:hover, .lqcg_yhm .more:hover{ text-decoration:none;}
+.lqcg_yhm .code{background-color:#F0F0F0; color:#ff0000; padding:15px 10px; border:1px solid #cccccc;font-size:36px; line-height:48px; width:450px; margin:0 0 50px 80px; text-align:center; word-break: break-all; }
+
+
+/*客户端下载*/
+.khdxz{ background:url(../../img/m/bg_x.jpg) repeat-x 0 -88px; overflow:hidden; padding-top:55px;}
+.khdxz .intro{ margin:0 80px 20px 65px; padding-left:130px; background:url(../img/app_icon.png) no-repeat; overflow:hidden;}
+.khdxz .intro dt{ height:40px; line-height:40px; font-size:28px;}
+.khdxz .intro .txt_1{ line-height:30px; font-size:20px;}
+.khdxz .intro .txt_2{ line-height:24px; font-size:16px; color:#9a9a9a;}
+.khdxz .btn .btn_1{ background:url(../img/ios_download_btn.png) no-repeat;  float:left; margin-left:48px; display:inline; width:258px; height:87px;}
+.khdxz .btn .btn_2{ background:url(../img/android_download_btn.png) no-repeat;  float:left; margin-left:25px; display:inline; width:258px; height:87px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

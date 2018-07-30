@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.oechsler.model.Role" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="deleted" property="deleted" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="base_sql">
+    id,create_by,create_time,update_by,update_time,deleted,name
+  </sql>
+
+  <select id="getRoleById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where id = #{id}
+  </select>
+
+  <select id="checkRoleInfo" parameterType="com.oechsler.model.Role" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where 1=1
+    <if test="name != null">
+      and name = #{name}
+    </if>
+    <if test="id != null">
+      and id != #{id}
+    </if>
+  </select>
+
+  <delete id="deleteUserRoleByRoleId" parameterType="java.lang.Integer">
+    delete ot_user_role
+    where role_id = #{id}
+  </delete>
+
+  <select id="getRoleIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select role_id
+    from ot_user_role
+    where user_id = #{userId}
+  </select>
+
+  <select id="queryRoleListByParam" parameterType="com.oechsler.model.Role" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where deleted = 0
+    <if test="name != null and name != ''">
+      and name = #{name}
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="getRoleByParam" parameterType="com.oechsler.model.Role" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where deleted = 0
+    <if test="name != null and name != ''">
+      and name = #{name}
+    </if>
+  </select>
+
+  <select id="getAllRole" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where deleted = 0
+  </select>
+
+  <update id="updateRole" parameterType="com.oechsler.model.Role">
+    update ot_role
+    <set>
+      <if test="updateBy != null">
+        update_by = #{updateBy},
+      </if>
+      <if test="updateTime!= null">
+        update_time = #{updateTime},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted},
+      </if>
+      <if test="name != null">
+        name = #{name},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <delete id="deletePermissionByRoleId" parameterType="java.lang.Integer">
+    delete
+    from ot_role_permission
+    where role_id = #{roleId}
+  </delete>
+
+  <insert id="editRolePermission" parameterType="java.util.List">
+    <foreach collection="list" item="map" separator=";">
+      insert into ot_role_permission(
+      role_id,
+      permission_id
+      )values(
+      #{map.roleId},
+      #{map.permissionId}
+      )
+    </foreach>
+  </insert>
+
+  <select id="getRoleByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_role
+    where id = (select role_id from ot_user_role where user_id = #{userId})
+  </select>
+
+  <insert id="insert" parameterType="com.oechsler.model.Role" >
+    insert into ot_role (id, create_by, create_time, 
+      update_by, update_time, deleted, 
+      name)
+    values (#{id,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oechsler.model.Role" >
+    insert into ot_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="batchDeleteRole" parameterType="java.lang.Object">
+    update ot_role
+    set deleted = 1
+    where id in (${value})
+  </update>
+
+  <delete id="batchDeleteUserRoleByRoleIds" parameterType="java.lang.Object">
+    delete from ot_user_role
+    where role_id in (${value})
+  </delete>
+
+  <delete id="batchDeletePermissionByRoleIds" parameterType="java.lang.Object">
+    delete from ot_role_permission
+    where role_id in (${value})
+  </delete>
+</mapper>

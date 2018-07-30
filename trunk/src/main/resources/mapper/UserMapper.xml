@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.oechsler.model.User" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="deleted" property="deleted" jdbcType="INTEGER" />
+    <result column="work_no" property="workNo" jdbcType="VARCHAR" />
+    <result column="en_name" property="enName" jdbcType="VARCHAR" />
+    <result column="ch_name" property="chName" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="gender" property="gender" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP" />
+    <result column="user_type" property="userType" jdbcType="VARCHAR" />
+    <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+    <result column="head_portrait" property="headPortrait" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="base_sql">
+    id,create_by,create_time,update_by,update_time,deleted,work_no,en_name,ch_name,
+    birthday,gender,user_name,password,last_login_time,user_type,head_portrait
+  </sql>
+
+  <sql id="u_base_sql">
+    u.id,u.create_by,u.create_time,u.update_by,u.update_time,u.deleted,u.work_no,
+    u.en_name,u.ch_name,u.birthday,u.gender,u.user_name,u.password,u.last_login_time,
+    u.user_type,u.head_portrait
+  </sql>
+
+  <select id="queryUserListByParam" parameterType="com.oechsler.model.User" resultMap="BaseResultMap">
+    select <include refid="u_base_sql"/>,
+    r.name roleName
+    from ot_user u
+    left join ot_user_role ur on ur.user_id = u.id
+    left join ot_role r on r.id = ur.role_id
+    where u.deleted = 0
+    <if test="workNo != null and workNo != ''">
+      and u.work_no = #{workNo}
+    </if>
+    <if test="userType == 'USER'">
+      and u.user_type = #{userType}
+    </if>
+    order by u.create_time desc
+  </select>
+
+  <delete id="deleteUserRoleByUserId" parameterType="java.lang.Integer">
+    delete ot_user_role
+    where user_id = #{id}
+  </delete>
+
+  <select id="getUserByParam" parameterType="com.oechsler.model.User" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_user
+    where id = #{id}
+    and password = #{password}
+  </select>
+
+  <select id="getUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_user
+    where id = #{id}
+  </select>
+
+  <select id="checkUserInfo" parameterType="com.oechsler.model.User" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_user
+    where (user_name = #{userName}
+    or work_no = #{workNo})
+    <if test="id != null">
+      and id != #{id}
+    </if>
+  </select>
+
+  <select id="findOneUser" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_user
+    where deleted = 0
+    and user_name = #{userName}
+    and password = #{password}
+  </select>
+
+  <update id="updateUser" parameterType="com.oechsler.model.User">
+    update ot_user
+    <set>
+      <if test="updateTime != null">
+        update_time=#{updateTime},
+      </if>
+      <if test="updateBy != null">
+        update_by=#{updateBy},
+      </if>
+      <if test="deleted != null">
+        deleted=#{deleted},
+      </if>
+      <if test="enName != null">
+        en_name=#{enName},
+      </if>
+      <if test="workNo != null">
+        work_no=#{workNo},
+      </if>
+      <if test="chName != null">
+        ch_name=#{chName},
+      </if>
+      <if test="birthday != null">
+        birthday=#{birthday},
+      </if>
+      <if test="gender != null">
+        gender=#{gender},
+      </if>
+      <if test="password != null and password != ''">
+        password=#{password},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time=#{lastLoginTime},
+      </if>
+      <if test="headPortrait != null">
+        head_portrait = #{headPortrait},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <insert id="insert" parameterType="com.oechsler.model.User" >
+    insert into ot_user (id, create_by, create_time, 
+      update_by, update_time, deleted, 
+      work_no, en_name, ch_name, 
+      birthday, gender, user_name, 
+      password, last_login_time,user_type)
+    values (#{id,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, 
+      #{workNo,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, #{chName,jdbcType=VARCHAR}, 
+      #{birthday,jdbcType=TIMESTAMP}, #{gender,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP},#{userType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oechsler.model.User" >
+    insert into ot_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+      <if test="workNo != null" >
+        work_no,
+      </if>
+      <if test="enName != null" >
+        en_name,
+      </if>
+      <if test="chName != null" >
+        ch_name,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="lastLoginTime != null" >
+        last_login_time,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="headPortrait != null">
+        head_portrait,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="workNo != null" >
+        #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="enName != null" >
+        #{enName,jdbcType=VARCHAR},
+      </if>
+      <if test="chName != null" >
+        #{chName,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userType != null" >
+        #{userType},
+      </if>
+      <if test="headPortrait != null">
+        #{headPortrait},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getUserRole" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select role_id
+    from ot_user_role
+    where user_id = #{userId}
+  </select>
+
+  <insert id="addUserRole" parameterType="java.lang.Object">
+    insert into ot_user_role(
+    user_id,
+    role_id
+    )values(
+    #{userId},
+    #{roleId}
+    )
+  </insert>
+
+  <update id="updateUserRole" parameterType="java.lang.Object">
+    update ot_user_role
+    set role_id = #{roleId}
+    where user_id = #{userId}
+  </update>
+
+  <update id="batchDeleteUser" parameterType="java.lang.Object">
+    update ot_user
+    set deleted = 1
+    where id in (${value})
+  </update>
+
+  <delete id="batchDeleteUserRole" parameterType="java.lang.Object">
+    delete from ot_user_role
+    where user_id in (${value})
+  </delete>
+</mapper>

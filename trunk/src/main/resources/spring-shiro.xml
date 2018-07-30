@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="sampleRealm"/>
+    </bean>
+
+    <!-- 授权 认证 -->
+    <bean id="sampleRealm" class="com.oechsler.shiro.token.SampleRealm" ></bean>
+
+    <!-- 认证数据库存储-->
+    <bean id="shiroManager" class="com.oechsler.shiro.service.impl.ShiroManagerImpl"/>
+    <bean id="login" class="com.oechsler.shiro.filter.LoginFilter"/>
+    <bean id="permission" class="com.oechsler.shiro.filter.PermissionFilter"/>
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/login/toLoginView.htm" />
+        <!--	TODO 待提取	-->
+        <property name="successUrl" value="/" />
+        <property name="unauthorizedUrl" value="/?login" />
+
+        <!-- 读取初始自定义权限内容-->
+        <property name="filterChainDefinitions" value="#{shiroManager.loadFilterChainDefinitions()}"/>
+        <property name="filters">
+            <util:map>
+                <entry key="login" value-ref="login"></entry>
+                <entry key="permission" value-ref="permission"></entry>
+            </util:map>
+        </property>
+    </bean>
+    <!-- Shiro生命周期处理器-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+</beans>

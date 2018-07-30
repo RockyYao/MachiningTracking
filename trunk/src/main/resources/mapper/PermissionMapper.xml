@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.oechsler.model.Permission" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="p_url" property="pUrl" jdbcType="VARCHAR" />
+    <result column="p_level" property="pLevel" jdbcType="INTEGER" />
+    <result column="p_icon" property="pIcon" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="checked" property="checked" jdbcType="BIT"/>
+    <result column="opened" property="open" jdbcType="INTEGER"/>
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="ChildResultMap" type="com.oechsler.model.Permission" extends="BaseResultMap">
+    <collection property="childList" column="id" select="com.oechsler.mapper.PermissionMapper.selectSecondLevelChild"/>
+  </resultMap>
+
+  <sql id="base_sql">
+    id,name,p_url,p_level,parent_id,p_icon,sort
+  </sql>
+
+  <sql id="p_base_sql">
+    p.id,p.name,p.p_url,p.p_level,p.parent_id,p.p_icon,p.sort
+  </sql>
+
+  <select id="findAllByRoleId" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="base_sql"/>,
+    1 as opened,
+    case
+    when id in (SELECT permission_id FROM ot_role_permission WHERE role_id = #{roleId})
+    then 'true'
+    else 'false'
+    end
+    as checked
+    from ot_permission
+    where id in (select permission_id from ot_role_permission where role_id = #{userRoleId})
+    order by sort
+  </select>
+
+  <select id="getPermissionByUserId" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select p_url
+    from ot_permission
+    where id in (
+    select permission_id from ot_role_permission where role_id = (
+    select role_id from ot_user_role where user_id = #{userId}
+    )
+    )
+    and (p_url is not null or p_url !='')
+  </select>
+
+  <select id="getUserLeftNavByUserId" parameterType="java.lang.Integer" resultMap="ChildResultMap">
+    select <include refid="base_sql"/>
+    from ot_permission
+    where id in (
+    select permission_id from ot_role_permission where role_id = (
+    select role_id from ot_user_role where user_id = #{userId}
+    )
+    )
+    and p_level = 1
+    order by sort
+  </select>
+
+  <select id="selectSecondLevelChild" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="base_sql"/>
+    from ot_permission
+    where parent_id = #{id}
+    and p_level = 2
+  </select>
+
+  <insert id="insert" parameterType="com.oechsler.model.Permission" >
+    insert into ot_permission (id, name, p_url,
+      p_level, parent_id,p_icon,sort)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{pUrl,jdbcType=VARCHAR},
+      #{pLevel,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER},#{pIcon},#{sort})
+  </insert>
+  <insert id="insertSelective" parameterType="com.oechsler.model.Permission" >
+    insert into ot_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="pUrl != null" >
+        p_url,
+      </if>
+      <if test="pLevel != null" >
+        p_level,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="pIcon != null" >
+        p_icon,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pUrl != null" >
+        #{pUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pLevel != null" >
+        #{pLevel,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="pIcon != null" >
+        #{pIcon},
+      </if>
+      <if test="sort != null" >
+        #{sort},
+      </if>
+    </trim>
+  </insert>
+</mapper>

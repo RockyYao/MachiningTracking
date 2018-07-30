@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.oechsler.model.Employee" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="deleted" property="deleted" jdbcType="INTEGER" />
+    <result column="work_no" property="workNo" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="NameResultMap" type="com.oechsler.model.Employee" extends="BaseResultMap">
+    <collection property="employeeProcedureList" column="work_no" select="com.oechsler.mapper.EmployeeProcedureMapper.queryProcedureByWorkNo"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, update_by, update_time, deleted, work_no, name, remark
+  </sql>
+
+  <insert id="batchInsertProcedure" parameterType="Map">
+    <foreach collection="names" item="name" separator=";">
+      insert into ot_employee_procedure(
+      work_no,
+      procedure_name
+      )values(
+      #{workNo},
+      #{name}
+      )
+    </foreach>
+  </insert>
+
+  <select id="queryEmployeeList" parameterType="com.oechsler.model.Employee" resultMap="NameResultMap">
+    select <include refid="Base_Column_List"/>
+    from ot_employee
+    where deleted = 0
+    <if test="workNo != null">
+      and work_no = #{workNo}
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="getEmployeeListByParam" parameterType="Map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from ot_employee
+    where deleted = 0
+    <if test="workNo != null">
+      and work_no = #{workNo}
+    </if>
+    <if test="notSelf != null">
+      and id != #{id}
+    </if>
+  </select>
+
+  <select id="getOneEmployeeByParam" parameterType="Map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from ot_employee
+    where deleted = 0
+    <if test="workNo != null">
+      and work_no = #{workNo}
+    </if>
+  </select>
+
+  <select id="queryProcedureByWorkNo" parameterType="Map" resultType="String">
+    select procedure_name procedureName
+    from ot_employee_procedure
+    where work_no = #{workNo}
+    and procedure_name = #{procedureName}
+  </select>
+
+  <delete id="deleteEmployeeProcedure" parameterType="String">
+    delete from ot_employee_procedure
+    where work_no = #{workNo}
+  </delete>
+
+  <update id="batchDeleteEmployee" parameterType="String">
+    update ot_employee
+    set deleted = 1
+    where id in (${value})
+  </update>
+
+  <delete id="batchDeleteEmployeeProcedure" parameterType="List">
+    delete from ot_employee_procedure
+    where work_no in
+    <foreach collection="list" item="workNo" open="(" separator="," close=")">
+      #{workNo}
+    </foreach>
+  </delete>
+
+  <select id="queryWorkNoByIds" parameterType="String" resultType="String">
+    select work_no workNo
+    from ot_employee
+    where id in (${value})
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="NameResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ot_employee
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ot_employee
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.oechsler.model.Employee" >
+    insert into ot_employee (id, create_by, create_time, 
+      update_by, update_time, deleted, 
+      work_no, name, remark
+      )
+    values (#{id,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, 
+      #{workNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="batchInsertEmployee" parameterType="List">
+    <foreach collection="list" item="employee" separator=";">
+      insert into ot_employee
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="employee.createBy != null" >
+          create_by,
+        </if>
+        <if test="employee.createTime != null" >
+          create_time,
+        </if>
+        <if test="employee.updateBy != null" >
+          update_by,
+        </if>
+        <if test="employee.updateTime != null" >
+          update_time,
+        </if>
+        <if test="employee.deleted != null" >
+          deleted,
+        </if>
+        <if test="employee.workNo != null" >
+          work_no,
+        </if>
+        <if test="employee.name != null" >
+          name,
+        </if>
+        <if test="employee.remark != null" >
+          remark,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="employee.createBy != null" >
+          #{employee.createBy,jdbcType=INTEGER},
+        </if>
+        <if test="employee.createTime != null" >
+          #{employee.createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="employee.updateBy != null" >
+          #{employee.updateBy,jdbcType=INTEGER},
+        </if>
+        <if test="employee.updateTime != null" >
+          #{employee.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="employee.deleted != null" >
+          #{employee.deleted,jdbcType=INTEGER},
+        </if>
+        <if test="employee.workNo != null" >
+          #{employee.workNo,jdbcType=VARCHAR},
+        </if>
+        <if test="employee.name != null" >
+          #{employee.name,jdbcType=VARCHAR},
+        </if>
+        <if test="employee.remark != null" >
+          #{employee.remark,jdbcType=VARCHAR},
+        </if>
+      </trim>
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.oechsler.model.Employee" >
+    insert into ot_employee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+      <if test="workNo != null" >
+        work_no,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="workNo != null" >
+        #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="batchUpdateEmployee" parameterType="List">
+    <foreach collection="list" item="employee" separator=";">
+      update ot_employee
+      <set >
+        <if test="employee.updateBy != null" >
+          update_by = #{employee.updateBy,jdbcType=INTEGER},
+        </if>
+        <if test="employee.updateTime != null" >
+          update_time = #{employee.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="employee.workNo != null" >
+          work_no = #{employee.workNo,jdbcType=VARCHAR},
+        </if>
+        <if test="employee.name != null" >
+          name = #{employee.name,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where work_no = #{employee.workNo,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.oechsler.model.Employee" >
+    update ot_employee
+    <set >
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="workNo != null" >
+        work_no = #{workNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.oechsler.model.Employee" >
+    update ot_employee
+    set create_by = #{createBy,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER},
+      work_no = #{workNo,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

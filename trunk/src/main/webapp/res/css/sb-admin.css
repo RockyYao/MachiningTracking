@@ -1,0 +1,53 @@
+
+/* Side Navigation */
+
+@media(min-width:768px) {
+    .side-nav {
+        position: fixed;
+        top: 50px;
+        left: 225px;
+        width: 225px;
+        margin-left: -225px;
+        border: none;
+        border-radius: 0;
+        overflow-y: auto;
+        background-color: RGB(235,235,235);
+        height:100%;
+    }
+
+    .side-nav>li>a {
+        width: 225px;
+    	color: gray;
+    }
+
+    .side-nav li a:hover,
+    .side-nav li a:focus {
+        outline: none;
+        background-color: RGB(88,222,255) !important;
+    	color: #fff;
+    }
+}
+
+.side-nav li.active {
+        outline: none;
+        background-color: RGB(29,135,219) !important;
+    	color: #fff;
+}
+
+.side-nav>ul {
+    padding: 0;
+}
+
+.side-nav>ul>li>a {
+    display: block;
+    padding: 10px 15px 10px 38px;
+    text-decoration: none;
+    color: gray;
+}
+.side-nav li.active a{
+    	color: #fff;
+}
+
+.side-nav>ul>li>a:hover {
+    color: #fff;
+}

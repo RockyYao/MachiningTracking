@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.OrderProcedureMapper">
+    <resultMap id="BaseResultMap" type="com.oechsler.model.OrderProcedure">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_by" property="createBy" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+        <result column="en_name" property="enName" jdbcType="VARCHAR"/>
+        <result column="ch_name" property="chName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="sort" property="sort" jdbcType="VARCHAR"/>
+        <result column="pre_cost_time" property="preCostTime" jdbcType="VARCHAR"/>
+        <result column="rel_cost_time" property="relCostTime" jdbcType="VARCHAR"/>
+        <result column="dwg_no" property="dwgNo" jdbcType="VARCHAR"/>
+        <result column="format_rel_cost_time" property="formatRelCostTime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="LogResultMap" type="com.oechsler.model.OrderProcedure" extends="BaseResultMap">
+        <collection property="procedureLogList" column="id"
+                    select="com.oechsler.mapper.OrderProcedureLogMapper.queryLogByProcedureId"/>
+    </resultMap>
+
+    <sql id="base_sql">
+    id,create_by,create_time,update_by,update_time,deleted,en_name,ch_name,status,sort,pre_cost_time,
+    rel_cost_time,dwg_no,format_rel_cost_time
+  </sql>
+
+    <select id="findLastProcedure" parameterType="String" resultMap="BaseResultMap">
+      select TOP 1 *  from ot_order_procedure WHERE dwg_no=#{dwgNo}  order by sort desc
+  </select>
+
+    <select id="queryOrderProcedureListByParam" parameterType="com.oechsler.model.OrderProcedure"
+            resultMap="LogResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order_procedure
+        where deleted = 0
+        <if test="dwgNo != null">
+            and dwg_no = #{dwgNo}
+        </if>
+        order by sort
+    </select>
+
+    <delete id="deleteProcedureById" parameterType="java.lang.Integer">
+        delete from ot_order_procedure
+        where id = #{id}
+    </delete>
+
+    <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order_procedure
+        where id = #{id}
+    </select>
+
+    <select id="queryOneOrderProcedure" parameterType="com.oechsler.model.OrderProcedure" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order_procedure
+        where deleted = 0
+        <if test="dwgNo != null">
+            and dwg_no = #{dwgNo}
+        </if>
+        <if test="enName != null">
+            and en_name = #{enName}
+        </if>
+        <if test="sort != null">
+            and sort = #{sort}
+        </if>
+    </select>
+
+    <select id="getOrderProcedureNotSelfByParam" parameterType="com.oechsler.model.OrderProcedure"
+            resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order_procedure
+        where deleted = 0
+        <if test="dwgNo != null">
+            and dwg_no = #{dwgNo}
+        </if>
+        <if test="enName != null">
+            and en_name = #{enName}
+        </if>
+        <if test="sort != null">
+            and sort = #{sort}
+        </if>
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.oechsler.model.OrderProcedure">
+    insert into ot_order_procedure (id, create_by, create_time, 
+      update_by, update_time, deleted, 
+      en_name, ch_name, status, 
+      sort, pre_cost_time, rel_cost_time, 
+      dwg_no)
+    values (#{id,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, 
+      #{enName,jdbcType=VARCHAR}, #{chName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{sort,jdbcType=VARCHAR}, #{preCostTime,jdbcType=VARCHAR}, #{relCostTime,jdbcType=VARCHAR},
+      #{dwgNo,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.oechsler.model.OrderProcedure">
+        insert into ot_order_procedure
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+            <if test="enName != null">
+                en_name,
+            </if>
+            <if test="chName != null">
+                ch_name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="preCostTime != null">
+                pre_cost_time,
+            </if>
+            <if test="relCostTime != null">
+                rel_cost_time,
+            </if>
+            <if test="dwgNo != null">
+                dwg_no,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="enName != null">
+                #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="chName != null">
+                #{chName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=VARCHAR},
+            </if>
+            <if test="preCostTime != null">
+                #{preCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="relCostTime != null">
+                #{relCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="dwgNo != null">
+                #{dwgNo,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertOrderProcedure" parameterType="com.oechsler.model.OrderProcedure">
+        <foreach collection="list" item="orderProcedure" separator=";">
+            insert into ot_order_procedure
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="orderProcedure.createBy != null">
+                    create_by,
+                </if>
+                <if test="orderProcedure.createTime != null">
+                    create_time,
+                </if>
+                <if test="orderProcedure.updateBy != null">
+                    update_by,
+                </if>
+                <if test="orderProcedure.updateTime != null">
+                    update_time,
+                </if>
+                <if test="orderProcedure.deleted != null">
+                    deleted,
+                </if>
+                <if test="orderProcedure.enName != null">
+                    en_name,
+                </if>
+                <if test="orderProcedure.chName != null">
+                    ch_name,
+                </if>
+                <if test="orderProcedure.status != null">
+                    status,
+                </if>
+                <if test="orderProcedure.sort != null">
+                    sort,
+                </if>
+                <if test="orderProcedure.preCostTime != null">
+                    pre_cost_time,
+                </if>
+                <if test="orderProcedure.relCostTime != null">
+                    rel_cost_time,
+                </if>
+                <if test="orderProcedure.dwgNo != null">
+                    dwg_no,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="orderProcedure.createBy != null">
+                    #{orderProcedure.createBy,jdbcType=INTEGER},
+                </if>
+                <if test="orderProcedure.createTime != null">
+                    #{orderProcedure.createTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="orderProcedure.updateBy != null">
+                    #{orderProcedure.updateBy,jdbcType=INTEGER},
+                </if>
+                <if test="orderProcedure.updateTime != null">
+                    #{orderProcedure.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="orderProcedure.deleted != null">
+                    #{orderProcedure.deleted,jdbcType=INTEGER},
+                </if>
+                <if test="orderProcedure.enName != null">
+                    #{orderProcedure.enName,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.chName != null">
+                    #{orderProcedure.chName,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.status != null">
+                    #{orderProcedure.status,jdbcType=INTEGER},
+                </if>
+                <if test="orderProcedure.sort != null">
+                    #{orderProcedure.sort,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.preCostTime != null">
+                    #{orderProcedure.preCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.relCostTime != null">
+                    #{orderProcedure.relCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.dwgNo != null">
+                    #{orderProcedure.dwgNo,jdbcType=VARCHAR},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateOrderProcedure" parameterType="java.util.List">
+        <foreach collection="list" item="orderProcedure" separator=";">
+            update ot_order_procedure
+            <set>
+                <if test="orderProcedure.updateBy != null">
+                    update_by = #{orderProcedure.updateBy,jdbcType=INTEGER},
+                </if>
+                <if test="orderProcedure.updateTime != null">
+                    update_time = #{orderProcedure.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="orderProcedure.preCostTime != null">
+                    pre_cost_time = #{orderProcedure.preCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="orderProcedure.sort != null">
+                    sort = #{orderProcedure.sort,jdbcType=VARCHAR},
+                </if>
+            </set>
+            where id = #{orderProcedure.id}
+        </foreach>
+    </update>
+
+    <update id="updateOrderProcedure" parameterType="com.oechsler.model.OrderProcedure">
+        update ot_order_procedure
+        <set>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="preCostTime != null">
+                pre_cost_time = #{preCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                sort = #{sort,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="relCostTime != null">
+                rel_cost_time = #{relCostTime},
+            </if>
+            <if test="formatRelCostTime != null">
+                format_rel_cost_time = #{formatRelCostTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

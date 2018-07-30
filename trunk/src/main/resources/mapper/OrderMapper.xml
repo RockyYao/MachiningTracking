@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.oechsler.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.oechsler.model.Order">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_by" property="createBy" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+        <result column="job_no" property="jobNo" jdbcType="VARCHAR"/>
+        <result column="dwg_no" property="dwgNo" jdbcType="VARCHAR"/>
+        <result column="rev" property="rev" jdbcType="VARCHAR"/>
+        <result column="order_qty" property="orderQty" jdbcType="VARCHAR"/>
+        <result column="plot" property="plot" jdbcType="VARCHAR"/>
+        <result column="prod_qty" property="prodQty" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="pre_cost_time" property="preCostTime" jdbcType="VARCHAR"/>
+        <result column="rel_cost_time" property="relCostTime" jdbcType="VARCHAR"/>
+        <result column="current_procedure" property="currentProcedure" jdbcType="VARCHAR"/>
+        <result column="bar_code" property="barCode" jdbcType="VARCHAR"/>
+        <result column="same_dwg_no" property="sameDwgNo" jdbcType="VARCHAR"/>
+        <result column="current_sort" property="currentSort" jdbcType="VARCHAR"/>
+        <result column="format_rel_cost_time" property="formatRelCostTime" jdbcType="VARCHAR"/>
+        <result column="target_date" property="targetDate" jdbcType="TIMESTAMP"/>
+        <result column="initiator" property="initiator" jdbcType="VARCHAR"/>
+        <result column="initiator_date" property="initiatorDate" jdbcType="TIMESTAMP"/>
+        <result column="new_dwg_no" property="newDwgNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="base_sql">
+    id,create_by,create_time,update_by,update_time,deleted,job_no,dwg_no,rev,order_qty,
+    plot,prod_qty,status,pre_cost_time,rel_cost_time,current_procedure,bar_code,same_dwg_no,
+    current_sort,format_rel_cost_time,target_date,initiator,initiator_date,new_dwg_no
+  </sql>
+
+    <select id="queryByOrderList" parameterType="java.util.List" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where dwg_no in
+        <foreach collection="list" item="order" open="(" separator="," close=")">
+            #{order.dwgNo}
+        </foreach>
+    </select>
+
+    <select id="queryOneOrder" parameterType="com.oechsler.model.Order" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where deleted = 0
+        <if test="dwgNo != null">
+            and dwg_no = #{dwgNo}
+        </if>
+        <if test="barCode != null">
+            and bar_code = #{barCode}
+        </if>
+    </select>
+
+    <select id="checkOrderByNewDwgNo" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where deleted = 0
+        and new_dwg_no = #{newDwgNo}
+    </select>
+
+    <select id="queryOrderListByParam" parameterType="com.oechsler.model.Order" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where deleted = 0
+        <if test="dwgNo != null and dwgNo != ''">
+            and dwg_no = #{dwgNo}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="jobNo != null">
+            and job_no = #{jobNo}
+        </if>
+    </select>
+
+    <select id="queryOrderList" parameterType="com.oechsler.model.Order" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where deleted = 0
+        <if test="dwgNo != null and dwgNo != ''">
+            and dwg_no like '%'+#{dwgNo}+'%'
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="jobNo != null">
+            and job_no like '%'+#{jobNo}+'%'
+        </if>
+    </select>
+
+    <select id="queryOrderById" parameterType="java.lang.Object" resultMap="BaseResultMap">
+        select
+        <include refid="base_sql"/>
+        from ot_order
+        where id = #{orderId}
+    </select>
+
+    <insert id="batchInsertOrder" parameterType="com.oechsler.model.Order">
+        <foreach collection="list" item="order" separator=";">
+            insert into ot_order
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="order.createBy != null">
+                    create_by,
+                </if>
+                <if test="order.createTime != null">
+                    create_time,
+                </if>
+                <if test="order.updateBy != null">
+                    update_by,
+                </if>
+                <if test="order.updateTime != null">
+                    update_time,
+                </if>
+                <if test="order.deleted != null">
+                    deleted,
+                </if>
+                <if test="order.jobNo != null">
+                    job_no,
+                </if>
+                <if test="order.dwgNo != null">
+                    dwg_no,
+                </if>
+                <if test="order.rev != null">
+                    rev,
+                </if>
+                <if test="order.orderQty != null">
+                    order_qty,
+                </if>
+                <if test="order.plot != null">
+                    plot,
+                </if>
+                <if test="order.prodQty != null">
+                    prod_qty,
+                </if>
+                <if test="order.status != null">
+                    status,
+                </if>
+                <if test="order.preCostTime != null">
+                    pre_cost_time,
+                </if>
+                <if test="order.relCostTime != null">
+                    rel_cost_time,
+                </if>
+                <if test="order.currentProcedure != null">
+                    current_procedure,
+                </if>
+                <if test="order.barCode != null">
+                    bar_code,
+                </if>
+                <if test="order.sameDwgNo != null">
+                    same_dwg_no,
+                </if>
+                <if test="order.targetDate != null">
+                    target_date,
+                </if>
+                <if test="order.initiator != null">
+                    initiator,
+                </if>
+                <if test="order.initiatorDate != null">
+                    initiator_date,
+                </if>
+                <if test="order.newDwgNo != null">
+                    new_dwg_no,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="order.createBy != null">
+                    #{order.createBy,jdbcType=INTEGER},
+                </if>
+                <if test="order.createTime != null">
+                    #{order.createTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="order.updateBy != null">
+                    #{order.updateBy,jdbcType=INTEGER},
+                </if>
+                <if test="order.updateTime != null">
+                    #{order.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="order.deleted != null">
+                    #{order.deleted,jdbcType=INTEGER},
+                </if>
+                <if test="order.jobNo != null">
+                    #{order.jobNo,jdbcType=VARCHAR},
+                </if>
+                <if test="order.dwgNo != null">
+                    #{order.dwgNo,jdbcType=VARCHAR},
+                </if>
+                <if test="order.rev != null">
+                    #{order.rev,jdbcType=VARCHAR},
+                </if>
+                <if test="order.orderQty != null">
+                    #{order.orderQty,jdbcType=VARCHAR},
+                </if>
+                <if test="order.plot != null">
+                    #{order.plot,jdbcType=VARCHAR},
+                </if>
+                <if test="order.prodQty != null">
+                    #{order.prodQty,jdbcType=VARCHAR},
+                </if>
+                <if test="order.status != null">
+                    #{order.status,jdbcType=INTEGER},
+                </if>
+                <if test="order.preCostTime != null">
+                    #{order.preCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="order.relCostTime != null">
+                    #{order.relCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="order.currentProcedure != null">
+                    #{order.currentProcedure,jdbcType=VARCHAR},
+                </if>
+                <if test="order.barCode != null">
+                    #{order.barCode,jdbcType=VARCHAR},
+                </if>
+                <if test="order.sameDwgNo != null">
+                    #{order.sameDwgNo,jdbcType=VARCHAR},
+                </if>
+                <if test="order.targetDate != null">
+                    #{order.targetDate},
+                </if>
+                <if test="order.initiator != null">
+                    #{order.initiator},
+                </if>
+                <if test="order.initiatorDate != null">
+                    #{order.initiatorDate},
+                </if>
+                <if test="order.newDwgNo != null">
+                    #{order.newDwgNo},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.oechsler.model.Order">
+        insert into ot_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+            <if test="jobNo != null">
+                job_no,
+            </if>
+            <if test="dwgNo != null">
+                dwg_no,
+            </if>
+            <if test="rev != null">
+                rev,
+            </if>
+            <if test="orderQty != null">
+                order_qty,
+            </if>
+            <if test="plot != null">
+                plot,
+            </if>
+            <if test="prodQty != null">
+                prod_qty,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="preCostTime != null">
+                pre_cost_time,
+            </if>
+            <if test="relCostTime != null">
+                rel_cost_time,
+            </if>
+            <if test="currentProcedure != null">
+                current_procedure,
+            </if>
+            <if test="barCode != null">
+                bar_code,
+            </if>
+            <if test="sameDwgNo != null">
+                same_dwg_no,
+            </if>
+            <if test="currentSort != null">
+                current_sort,
+            </if>
+            <if test="formatRelCostTime != null">
+                format_rel_cost_time,
+            </if>
+            <if test="targetDate != null">
+                target_date,
+            </if>
+            <if test="initiator != null">
+                initiator,
+            </if>
+            <if test="initiatorDate != null">
+                initiator_date,
+            </if>
+            <if test="newDwgNo != null">
+                new_dwg_no,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="jobNo != null">
+                #{jobNo,jdbcType=VARCHAR},
+            </if>
+            <if test="dwgNo != null">
+                #{dwgNo,jdbcType=VARCHAR},
+            </if>
+            <if test="rev != null">
+                #{rev,jdbcType=VARCHAR},
+            </if>
+            <if test="orderQty != null">
+                #{orderQty,jdbcType=VARCHAR},
+            </if>
+            <if test="plot != null">
+                #{plot,jdbcType=VARCHAR},
+            </if>
+            <if test="prodQty != null">
+                #{prodQty,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="preCostTime != null">
+                #{preCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="relCostTime != null">
+                #{relCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="currentProcedure != null">
+                #{currentProcedure,jdbcType=VARCHAR},
+            </if>
+            <if test="barCode != null">
+                #{barCode,jdbcType=VARCHAR},
+            </if>
+            <if test="sameDwgNo != null">
+                #{sameDwgNo,jdbcType=VARCHAR},
+            </if>
+            <if test="currentSort != null">
+                #{currentSort},
+            </if>
+            <if test="formatRelCostTime != null">
+                #{formatRelCostTime},
+            </if>
+            <if test="targetDate != null">
+                #{targetDate},
+            </if>
+            <if test="initiator != null">
+                #{initiator},
+            </if>
+            <if test="initiatorDate != null">
+                #{initiatorDate},
+            </if>
+            <if test="newDwgNo != null">
+                #{newDwgNo},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateOrder" parameterType="com.oechsler.model.Order">
+        update ot_order
+        <set>
+            <if test="deleted != null">
+                deleted = #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="jobNo != null">
+                job_no = #{jobNo,jdbcType=VARCHAR},
+            </if>
+            <if test="dwgNo != null">
+                dwg_no = #{dwgNo,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="rev != null">
+                rev = #{rev,jdbcType=VARCHAR},
+            </if>
+            <if test="orderQty != null">
+                order_qty = #{orderQty,jdbcType=VARCHAR},
+            </if>
+            <if test="plot != null">
+                plot = #{plot,jdbcType=VARCHAR},
+            </if>
+            <if test="prodQty != null">
+                prod_qty = #{prodQty,jdbcType=VARCHAR},
+            </if>
+            <if test="barCode != null">
+                bar_code = #{barCode,jdbcType=VARCHAR},
+            </if>
+            <if test="preCostTime != null">
+                pre_cost_time = #{preCostTime,jdbcType=VARCHAR},
+            </if>
+            <if test="currentProcedure != null">
+                current_procedure = #{currentProcedure},
+            </if>
+            <if test="currentSort != null">
+                current_sort = #{currentSort},
+            </if>
+            <if test="formatRelCostTime != null">
+                format_rel_cost_time = #{formatRelCostTime},
+            </if>
+            <if test="targetDate != null">
+                target_date = #{targetDate},
+            </if>
+            <if test="initiator != null">
+                initiator = #{initiator},
+            </if>
+            <if test="initiatorDate != null">
+                initiator_date = #{initiatorDate},
+            </if>
+            <if test="newDwgNo != null">
+                new_dwg_no = #{newDwgNo},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdateOrder" parameterType="java.util.List">
+        <foreach collection="list" item="order" separator=";">
+            update ot_order
+            <set>
+                <if test="order.updateBy != null">
+                    update_by = #{order.updateBy,jdbcType=INTEGER},
+                </if>
+                <if test="order.updateTime != null">
+                    update_time = #{order.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="order.rev != null">
+                    rev = #{order.rev,jdbcType=VARCHAR},
+                </if>
+                <if test="order.orderQty != null">
+                    order_qty = #{order.orderQty,jdbcType=VARCHAR},
+                </if>
+                <if test="order.plot != null">
+                    plot = #{order.plot,jdbcType=VARCHAR},
+                </if>
+                <if test="order.prodQty != null">
+                    prod_qty = #{order.prodQty,jdbcType=VARCHAR},
+                </if>
+                <if test="order.preCostTime != null">
+                    pre_cost_time = #{order.preCostTime,jdbcType=VARCHAR},
+                </if>
+                <if test="order.barCode != null">
+                    bar_code = #{order.barCode,jdbcType=VARCHAR},
+                </if>
+                <if test="order.sameDwgNo != null">
+                    same_dwg_no = #{order.sameDwgNo,jdbcType=VARCHAR},
+                </if>
+                <if test="order.targetDate != null">
+                    target_date = #{order.targetDate},
+                </if>
+                <if test="order.initiator != null">
+                    initiator = #{order.initiator},
+                </if>
+                <if test="order.initiatorDate != null">
+                    initiator_date = #{order.initiatorDate},
+                </if>
+                <if test="order.newDwgNo != null">
+                    new_dwg_no = #{order.newDwgNo},
+                </if>
+            </set>
+            where id = #{order.id}
+        </foreach>
+    </update>
+
+    <update id="updateOrderAndSameDwgNoOrder" parameterType="Map">
+        update ot_order
+        <set>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="currentProcedure != null">
+                current_procedure = #{currentProcedure},
+            </if>
+            <if test="currentSort != null">
+                current_sort = #{currentSort},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="relCostTime != null">
+                rel_cost_time = #{relCostTime},
+            </if>
+            <if test="formatRelCostTime != null">
+                format_rel_cost_time = #{formatRelCostTime},
+            </if>
+            <if test="sortIsNull != null">
+                current_sort = null,
+            </if>
+            <if test="procedureIsNull != null">
+                current_procedure = null,
+            </if>
+            <if test="newDwgNo != null">
+                new_dwg_no = #{newDwgNo},
+            </if>
+        </set>
+        where new_dwg_no = #{dwgNo}
+        or same_dwg_no = #{dwgNo}
+    </update>
+
+    <update id="batchDeleteOrder" parameterType="java.lang.Object">
+        update ot_order
+        set deleted = 1
+        where id in (${value})
+    </update>
+
+    <select id="getByIds" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="base_sql"/>
+        from ot_order
+        where id in (${value})
+    </select>
+</mapper>
